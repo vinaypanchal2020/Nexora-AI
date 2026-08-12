@@ -1,6 +1,8 @@
 <script setup>
 import '../styles/sidebar.css'
 
+const emit = defineEmits(['reset-chat'])
+
 defineProps({
   activeDocument: { type: String, default: null },
   messageCount: { type: Number, default: 0 },
@@ -54,6 +56,9 @@ defineProps({
       </ol>
     </div>
 
+    <button class="new-chat-btn" type="button" @click="$emit('reset-chat')">
+      New chat
+    </button>
   </aside>
 </template>
 

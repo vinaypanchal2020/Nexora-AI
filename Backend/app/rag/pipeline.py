@@ -8,14 +8,14 @@ from app.rag.retriever import retrieve_chunks
 from app.rag.prompt_builder import prompt_builder
 from app.rag.llm import generate_response
 
-async def general_chat(message: str):
-    response = await generate_response(message)
+async def general_chat(message: str, history=None):
+    response = await generate_response(message, history=history)
     return {
         "mode": "General Chat",
         "response": response
     }
 
-async def rag_chat(message: str, file: UploadFile):
+async def rag_chat(message: str, file: UploadFile, history=None):
     text = await process_document(file)
     text = clean_text(text)
     chunks = chunk_text(text)
@@ -23,7 +23,7 @@ async def rag_chat(message: str, file: UploadFile):
     store_embeddings(chunks, embeddings)
     relevant_chunks = retrieve_chunks(message)
     prompt = prompt_builder(message, relevant_chunks)
-    response = await generate_response(prompt)
+    response = await generate_response(prompt, history=history)
     return {
         "mode": "RAG",
         "message": message,

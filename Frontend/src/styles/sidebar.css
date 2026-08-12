@@ -93,25 +93,30 @@ dd {
   background: var(--danger);
 }
 
+.new-chat-btn {
+  margin-top: 8px;
+  background: rgba(201, 138, 44, 0.12);
+  border: 1px solid var(--ink-line);
+  color: var(--paper);
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.new-chat-btn:hover {
+  background: rgba(201, 138, 44, 0.18);
+  border-color: var(--amber);
+}
+
 .how ol {
   margin: 0;
   padding-left: 18px;
   color: var(--paper-dim);
   font-size: 0.78rem;
   line-height: 1.6;
-}
-
-.endpoint {
-  margin-top: auto;
-  padding-top: 16px;
-  border-top: 1px dashed var(--ink-line);
-}
-.endpoint code {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  color: var(--paper-dim);
-  word-break: break-all;
 }
 
 @media (max-width: 720px) {

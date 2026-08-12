@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed, nextTick, watch } from 'vue'
 import Sidebar from './components/Sidebar.vue'
 import MessageBubble from './components/MessageBubble.vue'
 import ComposerBar from './components/ComposerBar.vue'
@@ -8,18 +8,58 @@ import { sendChatMessage } from './api.js'
 import './styles/app.css'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+const STORAGE_KEY = 'archive-answer-current-chat'
 
-const messages = ref([])
+function loadSavedChat() {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    if (!parsed || !Array.isArray(parsed.messages)) return null
+    return parsed
+  } catch (error) {
+    return null
+  }
+}
+
+const savedChat = loadSavedChat()
+const messages = ref(savedChat?.messages || [])
 const sending = ref(false)
 const connected = ref(true)
-const activeDocument = ref(null)
-const currentMode = ref(null)
+const activeDocument = ref(savedChat?.activeDocument || null)
+const currentMode = ref(savedChat?.currentMode || null)
 const threadEl = ref(null)
+
+watch(
+  [messages, activeDocument, currentMode],
+  () => {
+    try {
+      sessionStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          messages: messages.value,
+          activeDocument: activeDocument.value,
+          currentMode: currentMode.value
+        })
+      )
+    } catch (error) {
+      // ignore storage issues in restricted environments
+    }
+  },
+  { deep: true }
+)
 
 const messageCount = computed(() => messages.value.length)
 
 function timestamp() {
   return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
+
+function resetChat() {
+  messages.value = []
+  activeDocument.value = null
+  currentMode.value = null
+  sessionStorage.removeItem(STORAGE_KEY)
 }
 
 async function scrollToEnd() {
@@ -28,6 +68,11 @@ async function scrollToEnd() {
 }
 
 async function handleSend({ message, file }) {
+  const historyForRequest = messages.value.map((entry) => ({
+    role: entry.role,
+    text: entry.text
+  }))
+
   messages.value.push({
     role: 'user',
     text: message,
@@ -38,7 +83,7 @@ async function handleSend({ message, file }) {
 
   sending.value = true
   try {
-    const data = await sendChatMessage(message, file)
+    const data = await sendChatMessage(message, file, historyForRequest)
     connected.value = true
     currentMode.value = data.mode || null
     if (file) activeDocument.value = file.name
@@ -71,7 +116,7 @@ async function handleSend({ message, file }) {
       :message-count="messageCount"
       :current-mode="currentMode"
       :connected="connected"
-      :api-base="API_BASE_URL"
+      @reset-chat="resetChat"
     />
 
     <main class="thread-col">

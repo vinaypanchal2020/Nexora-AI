@@ -7,9 +7,19 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 
-export async function sendChatMessage(message, file) {
+export async function sendChatMessage(message, file, history = []) {
   const form = new FormData()
   form.append('message', message)
+
+  const normalizedHistory = history
+    .filter((entry) => entry && typeof entry.text === 'string' && entry.text.trim())
+    .map((entry) => ({
+      role: entry.role === 'assistant' ? 'assistant' : 'user',
+      content: entry.text
+    }))
+
+  form.append('history', JSON.stringify(normalizedHistory))
+
   if (file) {
     form.append('file', file)
   }
