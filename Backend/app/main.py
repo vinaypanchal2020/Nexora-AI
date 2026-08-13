@@ -1,18 +1,23 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+import os
+
 from app.routes.chat_route import router as chat_route
 
 load_dotenv()
 
 app = FastAPI()
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+FRONTEND_URL = os.getenv(
+    "FRONTEND_URL",
+    "http://localhost:5173"
+)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        API_BASE_URL,
+        FRONTEND_URL
     ],
     allow_credentials=True,
     allow_methods=["*"],
