@@ -1,0 +1,11 @@
+fastapi
+pypdf
+uvicorn
+python-multipart
+python-dotenv
+pillow
+pytesseract
+scikit-learn
+faiss-cpu
+groq
+numpy
