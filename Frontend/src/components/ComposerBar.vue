@@ -69,7 +69,7 @@ function onKeydown(e) {
         ref="fileInput"
         type="file"
         class="hidden-input"
-        accept=".pdf,.docx,.txt,.png,.jpg,.jpeg"
+        accept=".pdf,.docx,.txt"
         @change="onFileChange"
       />
 
