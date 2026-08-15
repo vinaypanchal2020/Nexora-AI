@@ -51,7 +51,7 @@ defineProps({
       <div class="ledger-title">How it works</div>
       <ol>
         <li>Ask a question directly for general chat.</li>
-        <li>Attach a PDF, DOCX, TXT, or image to ground answers in that document.</li>
+        <li>Attach a PDF, DOCX, or TXT to ground answers in that document.</li>
         <li>Cited excerpts appear beneath grounded answers.</li>
       </ol>
     </div>
